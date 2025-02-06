@@ -27,10 +27,11 @@ export async function getToken() {
 }
 
 export async function getDataSource() {
-    const token = await getToken();
-    const serverName = process.env.SQL_SERVER_NAME
-    const dbName = process.env.SQL_DATABASE_NAME
-    const synchronize = (process.env.SQL_DATABASE_SYNC || "false").toLowerCase() == "true"
+    const clientId = process.env.MANAGED_IDENTITY_ID;
+
+    const serverName = process.env.SQL_SERVER_NAME;
+    const dbName = process.env.SQL_DATABASE_NAME;
+    const synchronize = (process.env.SQL_DATABASE_SYNC || "false").toLowerCase() == "true";
     if (synchronize) {
         console.log("Synchronizing the database. Synchronizing the database in production is not recommended. This can lead to unintended consequences like dropping a table which can lead to data loss.")
     }
@@ -50,9 +51,9 @@ export async function getDataSource() {
         },
         extra: {
             authentication: {
-                type: 'azure-active-directory-access-token',
+                type:  'azure-active-directory-default',
                 options: {
-                    token: token
+                    clientId: clientId
                 }
             }
         }
